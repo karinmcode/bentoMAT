@@ -1,5 +1,9 @@
 function newStr = addNewFieldPopup(prompt,default)
+if isvarname('default')
     newStr  = inputdlg(prompt,'',1,default);
+else
+    newStr  = inputdlg(prompt,'',1);%KM
+end
     if(isempty(newStr))
         return;
     end
