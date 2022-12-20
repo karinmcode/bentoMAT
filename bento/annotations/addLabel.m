@@ -1,10 +1,33 @@
-function gui = addLabel(gui,newStr)
+function gui = addLabel(gui,newStr,varargin)
 %
 % (C) Ann Kennedy, 2019
 % California Institute of Technology
 % Licensing: https://github.com/annkennedy/bento/blob/master/LICENSE.txt
 
+if numel(varargin)==1%KM
+    newhotkey= varargin{1};
+    if isempty(newhotkey)% generate random new hotkey
+        existingHotkeys = cell2mat(fieldnames(gui.annot.hotkeys)');
+        allHotkeys ='a':'z' ;
+        possibleHotkeys = setdiff(allHotkeys,existingHotkeys);
+        if isempty(possibleHotkeys)
+            allHotkeys ='A':'Z' ;
+            possibleHotkeys = setdiff(allHotkeys,existingHotkeys);
+        end
+        if isempty(possibleHotkeys)
+            allHotkeys ='1':'8' ;
+            possibleHotkeys = setdiff(allHotkeys,existingHotkeys);
+        end
 
+        if isempty(possibleHotkeys)
+            %keyboard
+            allHotkeys =mynum2str((1:12)','F%g','cellstr') ;
+            possibleHotkeys = '-';
+        end
+        newhotkey = randsample(possibleHotkeys,1);
+
+    end
+end
 
 if(isempty(newStr))
     return;
@@ -45,17 +68,25 @@ if(any(strcmpi(fieldnames(gui.annot.hotkeysDef),newStr)) && ~strcmpi(gui.annot.h
     gui.annot.hotkeys.(hotkey) = newStr;
 
 elseif(~strcmpi(newStr,'unsaved_feature'))
-    hotkey = inputdlg(['Assign hotkey for ' strrep(newStr,'_',' ') '?']);
+    if exist('newhotkey','var')
+        hotkey = {newhotkey};
+    else
+        hotkey = inputdlg(['Assign hotkey for ' strrep(newStr,'_',' ') '?']);% hotkey assignment
+    end
     if(~isempty(hotkey))
         hotkey = regexprep(hotkey{:},'[^a-zA-z]','');
         if(length(hotkey)==1)
             gui.annot.hotkeys.(hotkey)    = newStr; % add the hotkey to the list
-            gui.annot.hotkeysDef.(newStr) = hotkey;
+
+
             for f = fieldnames(gui.annot.hotkeysDef)' %unassign that hotkey from other behaviors
-                if(gui.annot.hotkeysDef.(f{:}) == hotkey)
+                if(gui.annot.hotkeysDef.(f{:}) == hotkey) && hotkey~='-'
+                    %fprintf('\n>unassign that hotkey from other behaviors: %s',f{:})
                     gui.annot.hotkeysDef.(f{:}) = '_';
                 end
             end
+            gui.annot.hotkeysDef.(newStr) = hotkey;
+
         end
     end
 end
