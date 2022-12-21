@@ -9,10 +9,18 @@ function rmFeature(source,~,tag)
 gui = guidata(source);
 
 tagList = {gui.features.feat.tag};
+try
 featnum = find(strcmpi(tagList,tag));
+catch
+featnum = gui.features.menu.Value;
+end
+if isempty(featnum)% KM
+    featnum = gui.features.menu.Value;
+end
 
 delete(gui.features.feat(featnum).axes);
 delete(gui.features.feat(featnum).rmBtn);
+delete(gui.features.feat(featnum).condStat);%KM
 delete(gui.features.feat(featnum).thresholdU);
 delete(gui.features.feat(featnum).thresholdL);
 delete(gui.features.feat(featnum).threshValU);
