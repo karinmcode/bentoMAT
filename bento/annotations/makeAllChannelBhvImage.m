@@ -1,4 +1,4 @@
-function img = makeAllChannelBhvImage(gui,data,cmap,inds,tmax,showAnnot)
+function img = makeAllChannelBhvImage(gui,data,cmap,inds,idx_max,showAnnot)
 %
 % (C) Ann Kennedy, 2019
 % California Institute of Technology
@@ -9,35 +9,40 @@ function img = makeAllChannelBhvImage(gui,data,cmap,inds,tmax,showAnnot)
 chList = fieldnames(data);
 
 if(~isempty(inds))
-    L = length(inds);
-    mask            = (inds<1)|(inds>tmax);
+    numframe_win = length(inds);
+    mask            = (inds<1)|(inds>idx_max);
     inds(inds<1)    = 1;
-    inds(inds>tmax) = tmax;
+    inds(inds>idx_max) = idx_max;
 else
-    L = tmax;
+    numframe_win = idx_max;
 end
-img = ones(length(chList),L,3);
-for ch = 1:length(chList)
+img = ones(length(chList),numframe_win,3);
+for ich = 1:length(chList)
+    ch = chList{ich};
+    bhvList = fieldnames(data.(ch));
     
-    bhvList = fieldnames(data.(chList{ch}));
-    
-    for i = 1:length(bhvList)
-        show = (~isfield(showAnnot,bhvList{i})) || (isfield(showAnnot,bhvList{i}) && showAnnot.(bhvList{i}));
-        if(show && ~strcmpi(bhvList{i},'other'))
+    for ibe = 1:length(bhvList)
+        be = bhvList{ibe};
+
+        show = (~isfield(showAnnot,be)) || (isfield(showAnnot,be) && showAnnot.(be));
+        if(show && ~strcmpi(be,'other'))
             
-            if(strcmpi(chList{ch},gui.annot.activeCh))
-                hits = gui.annot.bhv.(bhvList{i})(inds);
-                img(ch,hits~=0,:)   = ones(sum(hits),1)*cmap.(bhvList{i});
-            elseif(~isempty(data.(chList{ch}).(bhvList{i})))
-                use = data.(chList{ch}).(bhvList{i});
+            if(strcmpi(ch,gui.annot.activeCh))
+                hits = gui.annot.bhv.(be)(inds);
+                img(ich,hits~=0,:)   = ones(sum(hits),1)*cmap.(be);
+            elseif(~isempty(data.(ch).(be)))
+                bouts = data.(ch).(be);
+                % make convertToRast faster
                 if(~isempty(inds))
-                    use(use(:,2)<inds(1),:) = [];
-                    use(use(:,1)>inds(end),:) = [];
-                    use = use - inds(1);
+                    bouts(bouts(:,2)<inds(1),:) = [];
+                    bouts(bouts(:,1)>inds(end),:) = [];
+                    %bouts = bouts - inds(1);%original code
+                    bouts = bouts - inds(1)+1;%KM fixed shift that was specific to not active channel
                 end
-                if(~isempty(use))
-                    hits                = convertToRast(use,L);
-                    img(ch,hits~=0,:)   = ones(sum(hits),1)*cmap.(bhvList{i});
+
+                if~isempty(bouts)
+                    hits                = convertToRast(bouts,numframe_win);
+                    img(ich,hits~=0,:)   = ones(sum(hits),1)*cmap.(be);
                 end
             end
         end
