@@ -7,7 +7,8 @@ function launchAnnoChanger(source)
 
 
 gui=guidata(source);
-answer = inputdlg({'Enter new annotation framerate:','Apply to all loaded data? (y/n)'},'Change framerate');
+reader = gui.ctrl.slider.getActiveVideoReader(gui);
+answer = inputdlg({'Enter new annotation framerate:','Apply to all loaded data? (y/n)'},'Change framerate',1,{num2str(reader.FrameRate),'y'});
 
 if(isempty(answer))
     return;
