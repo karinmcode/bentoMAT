@@ -22,13 +22,15 @@ gui.features.threshOn.Visible   = str2;
 gui.features.threshOff.Visible  = str;
 gui.features.threshSave.Visible = str;
 
-for i=1:length(gui.features.feat)
-    gui.features.feat(i).thresholdU.Visible  = str;
-    gui.features.feat(i).thresholdL.Visible  = str;
-    gui.features.feat(i).threshLineU.Visible = str;
-    gui.features.feat(i).threshLineL.Visible = str;
-    gui.features.feat(i).threshValU.Visible  = str;
-    gui.features.feat(i).threshValL.Visible  = str;
+for ifeat=1:length(gui.features.feat)
+    gui.features.feat(ifeat).thresholdU.Visible  = str;
+    gui.features.feat(ifeat).thresholdL.Visible  = str;
+    gui.features.feat(ifeat).threshLineU.Visible = str;
+    gui.features.feat(ifeat).threshLineL.Visible = str;
+    gui.features.feat(ifeat).threshValU.Visible  = str;
+    gui.features.feat(ifeat).threshValL.Visible  = str;
+
+    gui.features.feat(ifeat).condStat.Visible = str;
 end
 
 if(flag) % when switching into threshold mode, also change annotation channels
@@ -56,13 +58,16 @@ if(flag) % when switching into threshold mode, also change annotation channels
     gui.annot.hotkeys.unsaved_feature = 'z';
     
     gui.enabled.legend       = [1 1];
-    gui.enabled.fineAnnot(1) = 1; % don't display fineAnnot by default
+    gui.enabled.fineAnnot(1) = 1; 
     gui = redrawPanels(gui);
     gui = redrawFeaturePlots(gui);
 else
     %remove the temporary annotation label
-    gui.annot.bhv = rmfield(gui.annot.bhv,'unsaved_feature');
-    
+    try
+    gui.annot.bhv = rmfield(gui.annot.bhv,'unsaved_feature');%ORIGINAL
+    catch err
+    warning err;%KM
+    end
     % remove the temporary channel
 %     if(isfield(gui.data.annot,'thresholded_features'))
 %         gui.data.annot = rmfield(gui.data.annot,'thresholded_features');
