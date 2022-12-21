@@ -28,22 +28,22 @@ for j = 1:length(annoList)
 
     % unpack the annotations
     if(subFrames)
-        [atemp,tmax(j),tmin(j),FR,fid{j},~] = loadAnyAnnot([pth annoList{j}], defaultFR, startAnno,stopAnno);
+        [atemp,tmax(j),tmin(j),FR,fid{j},~] = loadAnyAnnot([pth filesep annoList{j}], defaultFR, startAnno,stopAnno);
     else
         try
-            [atemp,tmax(j),tmin(j),FR,fid{j},~] = loadAnyAnnot([pth annoList{j}], defaultFR);
+            [atemp,tmax(j),tmin(j),FR,fid{j},~] = loadAnyAnnot([pth filesep annoList{j}], defaultFR);
         catch
-            disp(['Couldn''t load annotations at ' pth annoList{j}]);
+            disp(['Couldn''t load annotations at ' pth filesep annoList{j}]);
             keyboard
         end
     end
     
     % generate a filename to save modified annotations
     [~,~,ext] = fileparts(annoList{j});
-    if(subFrames), fidSave{j} = strrep([pth annoList{j}],ext,['_' num2str(tmax(j)) '-' num2str(tmax(j)) '.annot']);
-    else,          fidSave{j} = strrep([pth annoList{j}],ext,'.annot');
+    if(subFrames), fidSave{j} = strrep([pth filesep annoList{j}],ext,['_' num2str(tmax(j)) '-' num2str(tmax(j)) '.annot']);
+    else,          fidSave{j} = strrep([pth filesep annoList{j}],ext,'.annot');
     end
-    fidSave{j} = strrep([pth annoList{j}],'.txt','.annot');
+    fidSave{j} = strrep([pth filesep annoList{j}],'.txt','.annot');
 
     % keep track of framerates
     for f = fieldnames(atemp)'

@@ -1,4 +1,4 @@
-function [rast,time,spikes,ROIs] = unpackCaData(pth)
+function [rast,time,spikes,ROIs] = unpackCaData(URL)
 %
 % (C) Ann Kennedy, 2019
 % California Institute of Technology
@@ -6,7 +6,7 @@ function [rast,time,spikes,ROIs] = unpackCaData(pth)
 
 
 
-[~,fname,ext] = fileparts(pth);
+[MyDataFolder,fname,ext] = fileparts(URL);
 disp(['Loading Ca file ' fname '...']);
 
 [rast,time,ROIs]=deal([]);
@@ -21,7 +21,7 @@ switch ext
 %             rast(i+1,:) = temp{6}(temp{1}==i);
 %             rast(i+1,temp{5}(temp{1}==i)==0)=nan;
 %         end
-        temp = readtable(pth);
+        temp = readtable(URL);
         if(size(temp,2)==5) % it's an Anderson lab miniscope file
             time = temp(:,1)';
             rast = temp(:,5)';
@@ -34,9 +34,22 @@ switch ext
             rast = rast(2:end,:);
         end
         spikes=[];
+    case {'.findme' '.me'}%KM  Karin's files
+        % think of adding a info=findmydata(filename) function
+%         [a , d, rec]=mygce(fname);% example : fname = 'CAM1_m523_211118_003_motion_speed'% gce
+%         DATA_FOLDER = fullfile(MyDataFolder,a,d,rec);% example Y:\Users\Karin\data\processed\aligned2vid\m523\211118\003
+%         camID = mycamID(fname);
+%         CaFile = sprintf('fluo_CAM%g.mat',camID);
+%         CaUrl = fullfile(DATA_FOLDER,CaFile);
 
+        info=findmydata(URL);%URL should contains camID and DATA_FOLDER ideally
+        load(info.url.phys,'fluo');%mywinopen(CaUrl)
+        rast = double(fluo.values_common);
+        time = fluo.time_common- fluo.time_common(1);% here the code assumes that the calcium trace and the video are the same duration
+        %ROIs coming!
+        spikes=[];
     case '.mat'
-        temp = load(pth);
+        temp = load(URL);
         f    = fieldnames(temp);
         if(length(f)==1 || isfield(temp,'neuron'))
             if(length(f)==1)
@@ -80,14 +93,14 @@ switch ext
         time = [];
     case '.flr'
         % Yatang Ca traces
-        datapara = input_lyt(pth);
+        datapara = input_lyt(URL);
         rast = datapara.data';
         time=[];
         spikes=[];
 end
 
 if isempty(time)
-    time = getVideoTimestamps(pth);
+    time = getVideoTimestamps(URL);
     if(time)
         if(size(time,2)==1)
             time=time';
