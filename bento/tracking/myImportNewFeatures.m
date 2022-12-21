@@ -35,7 +35,7 @@ for ife = 1:nfe
 
     gui.data.tracking.features{i4feat}=fValues;%#ok
 
-
+    gui.data.tracking.fun = 'generic_timeseries';% provisory
 
 
     %%    - add to gui menu
@@ -54,6 +54,8 @@ updateAllData(gui);
 guidata(gui.h0,gui);
 
 %% Update GUI elements
+gui.enabled.features = [1 1];
+gui = redrawPanels(gui);
 redrawFeaturePlots(gui);
 guidata(gui.h0,gui);
 

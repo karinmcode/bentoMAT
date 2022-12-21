@@ -16,6 +16,7 @@ url = info.url;
 
 folder_proc = info.fo.vid;% where is the data folder with encoder, speed, position data
 url_save = url.features;% url of mat file where bento features are saved mywinopen(url_save)
+mymkdir(url_save);%mywinopen(url_save)
 
 
 %% Select features
@@ -36,7 +37,7 @@ end
 featureNames = list2import(ANSidx);
 
 
-for ife = 1:numel(featureNames)
+for ife = 1:numel(featureNames)%ife=2
     featureName = featureNames{ife};
     if ismember(featureName,{'other' })
         featureName = inputdlg('input name of variable to import');
@@ -103,14 +104,9 @@ end
 % add features to current data
 gui=myImportNewFeatures(gui,newFeatures);
 
-%[gui,data] = loadCurrentFeatures(gui,gui.data);
-%     disp('saved speed values to feature file.');
-%     evalin('base','bento');
-%     evalin('base','loadPreviousExpt(gui.h0);');
-%     return;%
-% edit unpackExperiment.m
 guidata(gui.h0,gui)
 updatePlot(gui.h0,[])
+
 
 end
 
