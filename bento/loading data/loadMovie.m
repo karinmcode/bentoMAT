@@ -62,5 +62,5 @@ end
 
 % add the reader to the gui struct
 data.io.movie.reader     = reader;
-
-gui = applySliderUpdates(gui,'movie',data.io.movie);
+s = gui.ctrl.slider;
+gui = s.applySliderUpdates(gui,'movie',data.io.movie);
