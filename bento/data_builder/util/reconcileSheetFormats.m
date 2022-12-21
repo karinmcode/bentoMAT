@@ -4,9 +4,20 @@ function [M,matches,fields] = reconcileSheetFormats(gui,raw)
 % California Institute of Technology
 % Licensing: https://github.com/annkennedy/bento/blob/master/LICENSE.txt
 
-
+% get rid of blank columns at the end of the columns %KM
+params = raw(1,:); % list of data fields in the excel sheet
+headers = raw(2,:); % list of data fields in the excel sheet
+isBlankCol = false(numel(headers),1);
+for i=1:numel(headers)
+    try
+        isBlankCol(i)=isnan(headers{i}) ;
+    end
+end
+raw = raw(:,~isBlankCol);
 
 fieldset = raw(2,:); % list of data fields in the excel sheet
+fieldset =fieldset(~cellfun('isempty',fieldset)); % list of data fields in the excel sheet
+
 fields = struct();
 for i=1:length(fieldset)
     str = strrep(fieldset{i},' ','_');
