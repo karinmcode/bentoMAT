@@ -1,4 +1,4 @@
-function img = makeBhvImage(bhv,cmap,inds,tmax,showAnnot)
+function img = makeBhvImage(bhv,cmap,inds,max_index,showAnnot)
 %
 % (C) Ann Kennedy, 2019
 % California Institute of Technology
@@ -10,33 +10,37 @@ bhvList = fieldnames(bhv);
 
 if(~isempty(inds))
     L = length(inds);
-    mask            = (inds<1)|(inds>tmax);
+    mask            = (inds<1)|(inds>max_index);
     inds(inds<1)    = 1;
-    inds(inds>tmax) = tmax;
+    inds(inds>max_index) = max_index;
 else
-    L = tmax;
+    L = max_index;
 end
 img = ones(1,L,3);
 for i = 1:length(bhvList)
-    if((isempty(showAnnot) || ~isfield(showAnnot,bhvList{i}) || showAnnot.(bhvList{i})) && ~isempty(bhv.(bhvList{i})) && ~strcmpi(bhvList{i},'other'))
-        if(min(size(bhv.(bhvList{i})))==2 || length(bhv.(bhvList{i}))==2)
+    b = bhvList{i};
+
+    if((isempty(showAnnot) || ~isfield(showAnnot,b) || showAnnot.(b)) && ~isempty(bhv.(b)) && ~strcmpi(b,'other'))
+
+        if(min(size(bhv.(b)))==2 || length(bhv.(b))==2)
             if(~isempty(inds))
-                use = bhv.(bhvList{i});
-                use(use(:,2)<inds(1),:) = [];
-                use(use(:,1)>inds(end),:) = [];
-                use = use - inds(1);
-                hits = convertToRast(use,L);
+                rast = bhv.(b);
+                rast(rast(:,2)<inds(1),:) = [];
+                rast(rast(:,1)>inds(end),:) = [];
+                rast = rast - inds(1);
+                hits = convertToRast(rast,L);
             else
-                hits = convertToRast(bhv.(bhvList{i}),tmax);
+                hits = convertToRast(bhv.(b),max_index);
             end
         else
             if(~isempty(inds))
-                hits = bhv.(bhvList{i})(inds);
+                hits = bhv.(b)(inds);
             else
-                hits = bhv.(bhvList{i});
+                hits = bhv.(b);
             end
         end
-        img(1,hits~=0,:)    = ones(sum(hits),1)*cmap.(bhvList{i});
+        img(1,hits~=0,:)    = ones(sum(hits),1)*cmap.(b);
+
     end
 end
 
