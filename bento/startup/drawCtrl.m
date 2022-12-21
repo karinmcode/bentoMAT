@@ -22,5 +22,10 @@ nRows = sum(scale);
 for i = 1:length(scale)
     str = ['draw' gui.config.ctrl{i} ...
            '(gui,' num2str(nRows-sum(scale(1:i))+1) ',' num2str(scale(i)) ',nRows)'];
-    gui.ctrl.(gui.config.ctrl{i}) = eval(str);
+    if strcmp(gui.config.ctrl{i},'myslider')
+
+        gui.ctrl.slider = eval(str);
+    else
+        gui.ctrl.(gui.config.ctrl{i}) = eval(str);
+    end
 end
