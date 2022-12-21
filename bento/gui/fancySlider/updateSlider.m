@@ -1,4 +1,4 @@
-function updateSlider(source,h)%
+function gui=updateSlider(source,h)%
 % (C) Ann Kennedy, 2019
 % California Institute of Technology
 % Licensing: https://github.com/annkennedy/bento/blob/master/LICENSE.txt

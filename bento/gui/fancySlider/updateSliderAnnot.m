@@ -13,9 +13,15 @@ if(gui.enabled.annot(2))
         time = round(gui.data.CaTime(end) - gui.data.CaTime(1)*gui.data.CaFR);
     elseif(isfield(gui.data,'trackTime'))
         time = round(gui.data.trackTime(end) - gui.data.trackTime(1)/(gui.data.trackTime(2)-gui.data.trackTime(1)));
+    else
+        time = 0;%KM
     end
 
-    offset = gui.data.io.annot.tmin/gui.data.annoFR;
+    try
+        offset = gui.data.io.annot.tmin/gui.data.annoFR;
+    catch
+        offset = 0;%KM
+    end
     inds = find((gui.data.annoTime>=(gui.ctrl.slider.Min-offset)) & (gui.data.annoTime<=(gui.ctrl.slider.Max-offset)));
     img     = makeBhvImage(gui.annot.bhv,gui.annot.cmap,inds,time,gui.annot.show);
 
