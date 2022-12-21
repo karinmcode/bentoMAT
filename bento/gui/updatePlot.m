@@ -115,9 +115,7 @@ end
 
 %% UPDATE FEATURES : update the plotted features
 if(all(gui.enabled.features) && isfield(gui.features,'feat'))
-%     if ~isfield(gui,'data')%Provisory
-%         gui = guidata(gui.h0);
-%     end
+
     Window = str2double(gui.ctrl.track.win.String);
     vec  = (gui.data.trackTime >= (time-Window)) & (gui.data.trackTime <= (time+Window));
     vec  = vec | [false vec(1:end-1)] | [vec(2:end) false];
