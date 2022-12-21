@@ -7,9 +7,20 @@ function setFeatThreshold(source,~,tag)
 
 
 gui = guidata(source);
+try
+    featInd = strcmpi({gui.features.feat(:).tag},tag);
+    thisFeat = gui.features.feat(featInd);
+    vals = gui.data.tracking.features{thisFeat.featNum};
+    thisFeat.minmax = myminmax(vals);
+    lim     = thisFeat.minmax ;
+catch
 
-featInd = strcmpi({gui.features.feat.tag},tag);
-lim     = get(gui.features.feat(featInd).axes,'ylim');
+    keyboard
+    vals = gui.features.feat(featInd).trace.YData;
+    lim     = myminmax(vals);
+    lim     = get(gui.features.feat.axes,'ylim');
+end
+
 switch source.Style
     case 'slider'
         newThr  = source.Value*(lim(2)-lim(1)) + lim(1);
@@ -24,20 +35,22 @@ switch source.Style
             source.String = num2str(lim(2));
         end
         
-        gui.features.feat(featInd).(['threshold' source.Tag]).Value = ...
+        gui.features.feat(featInd).(['threshold' source.Tag]).Value = ...%gui.features.feat(featInd).(['thresholdU'])
             (newThr-lim(1))/(lim(2)-lim(1));
 end
-set(gui.features.feat(featInd).(['threshVal' source.Tag]),'String',num2str(newThr));
 
-updateThresholdBoxes(gui,featInd);
+updateThresholdBoxes(gui,featInd);% blue ones
 
-% display effects of thresholding as annotations throughout the movie
+%% display effects of thresholding as annotations throughout the movie
 if(strcmpi(gui.annot.activeCh,'thresholded_features'))
     
     mask = getThresholdedFeatureMask(gui);
 
+    [mask,gui] = myAddCondStatementForFeature(gui,thisFeat,mask,source);
+
     % and display them
     gui.annot.bhv.unsaved_feature = mask;
+    guidata(gui.h0,gui);
     updateSliderAnnot(gui);
     guidata(gui.h0,gui);
     updatePlot(gui.h0,[]);
