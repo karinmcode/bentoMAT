@@ -9,6 +9,14 @@ function saveFeatThresholds(source,~)
 gui = guidata(source);
 
 [mask,params] = getThresholdedFeatureMask(gui);
+if numel(gui.features.feat)==1
+    activeFeatHandle = gui.features.feat;
+else
+    disp 'multiple features saving not coded yet! Close all the features that are irrelevant the the thresholded_feature'
+    return;
+end
+[mask,gui] = myAddCondStatementForFeature(gui,activeFeatHandle,mask,source);% KM
+
 
 if(~isfield(gui.features,'savedFilters'))
     gui.features.savedFilters{1} = params;
@@ -22,7 +30,8 @@ end
 
 if(strcmpi(gui.annot.activeCh,'thresholded_features'))
     prompt = ['Save to channel:'];
-    channels = [setdiff(gui.annot.channels,'thresholded_features'); {'[create new channel]'}];
+    prevChan = setdiff(gui.annot.channels,'thresholded_features');
+    channels = [prevChan(:); {'[create new channel]'}];
     [chStr, tf] = listdlg('promptString',prompt,'listString',channels,'SelectionMode','single');
     if ~tf
         return;
@@ -64,9 +73,10 @@ if(strcmpi(gui.annot.activeCh,'thresholded_features'))
     gui.allData(m).(s)(tr).annot.(chStr).(newStr) = convertToBouts(mask);
     
     gui.enabled.legend       = [1 1];
-    gui.enabled.fineAnnot(1) = 1; % don't display fineAnnot by default
+    gui.enabled.fineAnnot(1) = 1; % display fineAnnot by default
     gui = redrawPanels(gui);
 end
 
 guidata(gui.h0,gui);
 updateLegend(gui,1);
+disp('added new label ')
