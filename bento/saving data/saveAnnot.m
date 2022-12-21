@@ -9,7 +9,10 @@ if(~exist('saveAsTime','var'))
     saveAsTime = false;
 end
 
+
+mymkdir(filename);%KM
 fid = fopen(filename,'w');
+
 % write metadata-----------------------------------------------------------
 fprintf(fid,'%s\n','Bento annotation file');
 if(~isempty(movieNames))

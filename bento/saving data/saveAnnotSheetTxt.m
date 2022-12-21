@@ -5,8 +5,8 @@ function filename = saveAnnotSheetTxt(movieNames,trial,suggestedName,promptOverr
 % Licensing: https://github.com/annkennedy/bento/blob/master/LICENSE.txt
 
 
-
-if(~isempty(trial.io.annot.fid))
+DoesNotExistYet = (~isempty(trial.io.annot.fid)) && ~all(trial.io.annot.fid{1}==0);
+if DoesNotExistYet
     fid     = trial.io.annot.fid{:};
 else
     fid = [];
@@ -19,19 +19,35 @@ FR      = trial.io.annot.FR;
 % channels to the appropriate source file
 
 %always prompt the save path?
-if(isempty(fid)|strcmpi(fid(end-10:end),'blank.annot')|~strcmpi(fid(end-5:end),'.annot')) %need to create a new file
+if isempty(fid)
+    DO_CREATE_FILE = true;
+else
+    if endsWith(fid,{'blank.annot' '.annot'})
+        DO_CREATE_FILE = true;
+    else
+        DO_CREATE_FILE = false;
+    end
+end
+
+if DO_CREATE_FILE %need to create a new file
     if(isempty(suggestedName))
         suggestedName = [pwd filesep 'annotations'];
     end
-    [fname,pth] = uiputfile(suggestedName);
-    filename = [pth fname];
+    if ~promptOverride
+        [fname,pth] = uiputfile(suggestedName);
+    else
+        [pth,fname,ext] = fileparts(suggestedName);
+    end
+    filename = fullfile(pth ,[ fname ext]);
 elseif(exist('promptOverride','var') && ~promptOverride)
     [fname,pth] = uiputfile(fid);
-    filename = [pth fname];
+    filename = fullfile(pth , fname);
 else
     filename = fid;
 end
-
+if filename(1)==0
+    return;
+end
 % set a default value of frameFlag
 if(~exist('saveAsTime','var'))
     saveAsTime = false;
@@ -49,6 +65,10 @@ end
 
 annot = trial.annot;
 stim  = trial.stim;
+
+if ~endsWith(filename,'.annot')
+    filename = [filename '.annot'];
+end
 saveAnnot(filename,annot,tmin,tmax,FR,movieNames,stim,saveAsTime);
 
 
