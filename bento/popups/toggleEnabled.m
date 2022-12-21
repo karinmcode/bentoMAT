@@ -24,9 +24,11 @@ for f = fieldnames(gui.enabled)'
     end
 end
 
+% open dialog box where my mouse cursor is
 p(3) = 250;
-p(2) = p(2) + (p(4) - 30*count+60)/2;
 p(4) = 30*count+60;
+p(1:2) = get(0,'PointerLocation');
+%MonitorPositions = get(0,'MonitorPositions');
 h.Position = p;
 
 guidata(h,gui.h0);
