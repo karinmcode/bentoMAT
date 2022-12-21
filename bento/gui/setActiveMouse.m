@@ -17,6 +17,7 @@ else
     sessOld = '';
     trOld   = [];
 end
+
 if(gui.annot.modified)
     gui     = readoutAnnot(gui); %transfer most recent annotations back to gui.data
     choice  = questdlg('Save annotation changes to file?');
@@ -25,14 +26,14 @@ if(gui.annot.modified)
             mList    = get(gui.ctrl.expt.mouse,'String');
             sessList = get(gui.ctrl.expt.session,'String');
             trList   = get(gui.ctrl.expt.trial,'String');
-            
+
             set(gui.ctrl.expt.mouse,'Value',find(strcmpi(mList,num2str(mOld))));
             set(gui.ctrl.expt.session,'Value',find(strcmpi(sessList,strrep(sessOld,'session',''))));
             set(gui.ctrl.expt.trial,'Value',find(strcmpi(trList,num2str(trOld))));
             return;
         case 'Yes'
             gui.allData(mOld).(sessOld)(trOld).annot = gui.data.annot;
-			suggestedName = ['mouse' num2str(mOld) '_' sessOld '_' num2str(trOld,'%03d') '.annot'];
+            suggestedName = ['mouse' num2str(mOld) '_' sessOld '_' num2str(trOld,'%03d') '.annot'];
             saveAnnotSheetTxt(gui.data.io.movie.fid,gui.data,suggestedName,0,gui.annot.saveAsTime);
             gui.annot.modified = 0;
         case 'No'
@@ -45,17 +46,20 @@ end
 
 
 %update session list for the new mouse
-use = gui.allPopulated(:,1)==m;
-set(gui.ctrl.expt.session,'String',strtrim(cellstr(num2str(unique(gui.allPopulated(use,2))))));
+i4m = gui.allPopulated(:,1)==m;
+set(gui.ctrl.expt.session,'String',strtrim(cellstr(num2str(unique(gui.allPopulated(i4m,2))))));
 
 %update trial list for the new session
-use2 = use & (gui.allPopulated(:,2)==str2double(strrep(sess,'session','')));
+i4se = i4m & (gui.allPopulated(:,2)==str2double(strrep(sess,'session','')));
 
-if(m~=mOld | ~strcmpi(sess,sessOld)) % if we changed mice or sessions, jump to the first trial
-    tr = gui.allPopulated(find(use2,1,'first'),3);
-    set(gui.ctrl.expt.trial,'Value',1);
+% if we changed mice or sessions, jump to the first trial
+if(m~=mOld | ~strcmpi(sess,sessOld))
+    if numel(gui.ctrl.expt.trial.String)>1%KM
+        tr = gui.allPopulated(find(i4se,1,'first'),3);
+        set(gui.ctrl.expt.trial,'Value',1);
+    end
 end
-set(gui.ctrl.expt.trial,'String',strtrim(cellstr(num2str(gui.allPopulated(use2,3)))));
+set(gui.ctrl.expt.trial,'String',strtrim(cellstr(num2str(gui.allPopulated(i4se,3)))));
 
 data                = gui.allData(m).(sess)(tr);
 data.info.mouse     = m;
@@ -68,9 +72,9 @@ if(isfield(gui,'data'))
 end
 
 % now! load the movie
-if(gui.enabled.movie(1)) 
+if(gui.enabled.movie(1))
     if(newMovie || (isfield(gui,'data') && any(size(data.io.movie.fid)~=size(gui.data.io.movie.reader))))
-        [gui,data]  = loadMovie(gui,data); 
+        [gui,data]  = loadMovie(gui,data);
     else
         data.io.movie.reader     = gui.data.io.movie.reader;
         gui = applySliderUpdates(gui,'movie',data.io.movie);
@@ -87,16 +91,20 @@ if(gui.enabled.audio(1)) %audio overrides other fields for setting slider resolu
     gui = applySliderUpdates(gui,'audio',data);
 end
 
-% get tracking type if needed
+%% get tracking type if needed
 if(gui.enabled.tracker(1))
-    
+
+    %% - load current features to data
     [gui,data] = loadCurrentFeatures(gui,data);
 
+    if isempty(data.trackTime)
+        keyboard
+    end
     if(~isfield(data.tracking,'features') || isempty(data.tracking.features))
         gui.enabled.features = [0 0];
     end
     gui = redrawPanels(gui);
-    
+
     if(isfield(data.io.movie,'tmax') && isfield(data.io.movie,'FR'))
         nFrames = round((data.io.movie.tmax-data.io.movie.tmin)*data.io.movie.FR) + 1;
     elseif(isfield(data.tracking,'features') && ~isempty(data.tracking.features))
@@ -124,24 +132,30 @@ if(isfield(gui,'data') && isfield(gui.data,'PCA') && size(gui.data.rast,1)==N)
 end
 
 gui.data = data;
-% add the behavior annotations to the gui
+guidata(gui.h0,gui);
+%% add the behavior annotations to the gui
 if(gui.enabled.annot(1))
     gui = transferAnnot(gui,data);
-	if(gui.enabled.annot(2))
-		set(gui.audio.bg,'visible','on');
-		updateSliderAnnot(gui);
-		end
+    if(gui.enabled.annot(2))
+        set(gui.audio.bg,'visible','on');
+        updateSliderAnnot(gui);
+    end
 end
+
 % clean out the annotations
 resetAnnotText(gui);
+
 % update the legend
 updateLegend(gui,1);
+
 % update the scatterplot if applicable
 if(all(gui.enabled.scatter))
     p1  = gui.data.proj.d1*gui.data.rast;
     p2  = gui.data.proj.d2*gui.data.rast;
     set(gui.scatter.data,'xdata',p1,'ydata',p2);
 end
+
+
 
 % % add the ID of the stimulus
 % if(gui.enabled.movie(1))

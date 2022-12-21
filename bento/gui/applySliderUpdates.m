@@ -15,10 +15,15 @@ switch type
             Fr = info.FR; % use the experimenter-set value
             tMax = info.reader{1,1}.numFrames/Fr;
         else
-%             Fr = info.reader{1,1}.reader.FrameRate;
-%             tMax = info.reader{1,1}.reader.Duration;
-            Fr = info.FR;
-            tMax = info.tmax/Fr;
+
+            try
+                Fr = info.FR;
+                tMax = info.tmax/Fr;
+            catch%KM
+                Fr = info.reader{1,1}.reader.FrameRate;
+                info.FR = Fr;
+                tMax = info.reader{1,1}.reader.Duration;
+            end
         end
         maxVal = min(tMax,info.tmax/info.FR);
         minVal = max(1/Fr,info.tmin/info.FR);

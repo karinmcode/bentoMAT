@@ -57,4 +57,10 @@ gui.Keys.Alt    = 0;
 gui.quitbutton  = 0;
 gui.ctrl.slider.timer = tic;
 
+%% add uicontextmenus such that right click allows to edit relevant functions
+hPan=findobj(gui.h0,'BackgroundColor',[0.9400 0.9400 0.9400],'type','uipanel');
+for ipan = 1:numel(hPan)
+    myaddeditfilemenu(hPan(ipan),{'evalKeyUp' 'evalKeyDown'});
+end
+
 guidata(gui.h0,gui);

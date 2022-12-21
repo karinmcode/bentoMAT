@@ -1,5 +1,5 @@
 function clearAction(source,~)
-%
+% KM heavily modified
 % (C) Ann Kennedy, 2019
 % California Institute of Technology
 % Licensing: https://github.com/annkennedy/bento/blob/master/LICENSE.txt
@@ -7,18 +7,25 @@ function clearAction(source,~)
 
 
 gui = guidata(source);
-if(any(gui.Action~=0))
-    if(toc(gui.ctrl.slider.timer)<.3)
-        if(~isempty(strfind(gui.Action,'drag')))
-            hSlider = setSliderVal(gui.h0);
-        else
-            hSlider = incSliderVal(gui.h0);
+if(any(gui.Action~=0) )
+
+
+    gui = guidata(gui.h0);
+    slider = gui.ctrl.slider;
+    if(any(gui.Action))
+        test = toc(slider.timer);
+        if(test>0.15)
+            if(~isempty(strfind(gui.Action,'drag')))
+                gui = slider.setSliderVal(gui);%KM
+            else
+                gui = slider.incSliderVal(gui);%KM
+            end
+          
         end
-        updateSlider(gui.h0,hSlider);
-        dummy.Source.Tag = 'slider';
-        updatePlot(gui.h0,dummy);
-        gui.ctrl.slider = hSlider;
     end
+    drawnow;
+
+
 end
 
 gui.Action = 0;
