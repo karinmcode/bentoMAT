@@ -8,8 +8,9 @@ function gui = toggleAnnot(gui,toggle,key,lastKey)
     gui.annot.prev = gui.annot.bhv;
     switch toggle
         case 'start'
+            
             toggleAnnotBoxes(gui,'on',key);
-            gui.annot.highlightStart = max(round(...
+            gui.annot.highlightStart = max(floor(...
                 (gui.ctrl.slider.Value - gui.ctrl.slider.Min + 1/gui.data.annoFR)*gui.data.annoFR)-1,1);
 
         case 'cancel'
@@ -23,7 +24,7 @@ function gui = toggleAnnot(gui,toggle,key,lastKey)
             str     = gui.annot.hotkeys.(lastKey);
             gui.annot.bhv.(str)(inds) = true;
             
-            gui.annot.highlightStart = max(round(...
+            gui.annot.highlightStart = max(floor(...
                 (gui.ctrl.slider.Value - gui.ctrl.slider.Min + 1/gui.data.annoFR)*gui.data.annoFR)-1,1);
             
         case 'end'
@@ -42,7 +43,7 @@ function gui = toggleAnnot(gui,toggle,key,lastKey)
             gui.annot.highlightStart = [];
             gui.annot.highlighting = 0;
             
-        case 'fast'
+        case 'fast'% replace label
             [inds,bhv] = getFastEditInds(gui); %figure out which bout/bhvr is just starting
             if ~isempty(bhv)
                 gui.annot.bhv.(bhv)(inds) = 0;
@@ -52,10 +53,46 @@ function gui = toggleAnnot(gui,toggle,key,lastKey)
                 end
                 gui.annot.activeBeh = bhv;
                 
-                dummyEvent.Key = 'pagedown';
+                % go to next bout
+                dummyEvent.Key = 'downarrow';
                 evalKeyUp(gui.h0,dummyEvent);
             end
             gui.annot.modified = 1;
+
+        case 'startOverwrite'%KM
+
+            toggleAnnotBoxes(gui,'on',key);
+            gui.annot.highlightStart = max(floor(...
+                (gui.ctrl.slider.Value - gui.ctrl.slider.Min + 1/gui.data.annoFR)*gui.data.annoFR)-1,1);
+
+
+        case 'endOverwrite'%KM
+
+            toggleAnnotBoxes(gui,'off');
+            inds    = getAnnotInds(gui);
+
+            if(any(strcmpi(lastKey,{'delete','backspace'}))) %erase everything
+                for str = fieldnames(gui.annot.bhv)'
+                    gui.annot.bhv.(str{:})(inds) = false;
+                end
+            elseif(isfield(gui.annot.hotkeys,lastKey))
+                str = gui.annot.hotkeys.(lastKey);
+                gui.annot.bhv.(str)(inds) = ~any(strcmpi(key,{'delete','backspace'}));
+
+                % put zeros for other labels% KM
+                all_labels = fieldnames(gui.annot.bhv);
+                labels2zero = setdiff(all_labels,str);
+                for ila = 1:numel(labels2zero)
+                    thislabel = labels2zero{ila};
+                    gui.annot.bhv.(thislabel)(inds) = false;
+                end
+
+            end
+            
+            gui.annot.modified = 1;
+            gui.annot.highlightStart = [];
+            gui.annot.highlighting = 0;
+
     end
     
 end
@@ -89,7 +126,7 @@ end
 
 function inds = getAnnotInds(gui)
     p1 = gui.annot.highlightStart;
-    p2 = round((gui.ctrl.slider.Value - gui.ctrl.slider.Min)*gui.data.annoFR);
+    p2 = ceil((gui.ctrl.slider.Value - gui.ctrl.slider.Min)*gui.data.annoFR);% KM ceil?
     if(p1<p2)
         inds = p1:p2;
     else
@@ -98,7 +135,7 @@ function inds = getAnnotInds(gui)
 end
 
 function [inds,bhv] = getFastEditInds(gui)
-    t = floor((gui.ctrl.slider.Value - gui.ctrl.slider.Min)*gui.data.annoFR);
+    t = floor((gui.ctrl.slider.Value - gui.ctrl.slider.Min)*gui.data.annoFR);% KM floor
     p1=t;p2=t;
     dtThresh = -inf;
     bhv = [];
