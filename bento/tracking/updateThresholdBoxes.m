@@ -10,7 +10,7 @@ lim     = get(gui.features.feat(featInd).axes,'ylim');
 limU = str2num(gui.features.feat(featInd).threshValU.String);
 limL = str2num(gui.features.feat(featInd).threshValL.String);
 
-if(limU>limL)
+if(limU<limL)
     set(gui.features.feat(featInd).threshLineU,'xdata',gui.features.win*[-1 1 1 -1],...
                 'ydata',[lim(2) lim(2) limU limU]);
     set(gui.features.feat(featInd).threshLineL,'xdata',gui.features.win*[-1 1 1 -1],...
