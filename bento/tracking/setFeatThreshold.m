@@ -46,7 +46,12 @@ if(strcmpi(gui.annot.activeCh,'thresholded_features'))
     
     mask = getThresholdedFeatureMask(gui);
 
+    %% Check if conditional statement exists
     [mask,gui] = myAddCondStatementForFeature(gui,thisFeat,mask,source);
+    % display how many bouts have been detected
+    fprintf('\n_______')
+    fprintf('\n%g bouts detected',sum(diff(mask)==1))
+    fprintf('\n_______')
 
     % and display them
     gui.annot.bhv.unsaved_feature = mask;
