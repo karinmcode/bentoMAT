@@ -1,5 +1,6 @@
 function gui = drawAnnot(gui)
-%
+% gui = drawAnnot(gui)
+% initialisation function
 % (C) Ann Kennedy, 2019
 % California Institute of Technology
 % Licensing: https://github.com/annkennedy/bento/blob/master/LICENSE.txt
@@ -13,6 +14,7 @@ annot.activeBeh     = '';
 annot.modified      = 0;
 annot.highlighting  = 0;
 annot.saveAsTime    = false;
+annot.OverwriteMode = true;
 annot.prev          = [];
 annot.bhv           = struct();
 annot.show          = struct();
