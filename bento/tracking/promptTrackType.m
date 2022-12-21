@@ -21,10 +21,16 @@ if ~exist('filename','var')
     filename = '';
 end
 
-[s,v] = listdlg('PromptString',{'Specify format of file', filename},...
-                'SelectionMode','single',...
-                'ListSize',[160 100],...
-                'ListString',useList);
+if numel(useList)==1
+    % no need for a list dlg if only one format available
+    s = 1;
+    v = 1;
+else
+    [s,v] = listdlg('PromptString',{'Specify format of file', filename},...
+        'SelectionMode','single',...
+        'ListSize',[160 100],...
+        'ListString',useList);
+end
                 
 if(~v)
     warndlg('Tracking will be disabled until a tracking format has been specified');
