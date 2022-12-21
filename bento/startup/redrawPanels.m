@@ -18,7 +18,7 @@ for i = 1:length(gui.config.ctrl)
 end
 ctrlSize = sum(ctrlSize)*gui.config.rowscale;
 
-%figure out which panels are enabled, and set their visibility
+%% figure out which panels are enabled, and set their visibility
 for i = 1:length(enabled)
     if(gui.enabled.(enabled{i})(2))
         gui.(enabled{i}).panel.Visible = 'on';
@@ -30,7 +30,7 @@ if(gui.enabled.tracker(2)) %one exception- we still have the movie panel on if j
     gui.movie.panel.Visible = 'on';
 end
 
-%determine whether our display is one column or two
+%% determine whether our display is one column or two
 leftOn  = gui.enabled.movie(2) || gui.enabled.tracker(2);
 rightOn = gui.enabled.traces(2) || gui.enabled.features(2) || gui.enabled.scatter(2) ||...
             (~gui.enabled.movie(2) && (gui.enabled.audio(2) || gui.enabled.fineAnnot(2)));
