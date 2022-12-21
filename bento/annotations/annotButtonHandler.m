@@ -30,7 +30,7 @@ function annotButtonHandler(source,~)
             toDelete = removeFieldPopup(gui,'behavior','delete');
             gui      = rmLabel(gui,toDelete);
             
-        case 'copy channel'
+        case 'copy channel'% duplicate button
             toCopy = removeFieldPopup(gui,'channel','copy');
             for i=1:length(toCopy)
                 newStr = addNewFieldPopup(['New name for ' toCopy{i} ':'],{[toCopy{i} '_2']});
