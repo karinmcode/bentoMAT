@@ -22,6 +22,7 @@ if(~any(matches(:,2)==sess))
     sess = matches(1,2);
     set(gui.ctrl.expt.session,'Value',1);
 end
+
 % make sure we have a valid trial for this session
 matches = matches(matches(:,2)==sess,:);
 if(~any(matches(:,3)==tr))
@@ -57,4 +58,6 @@ gui = redrawPanels(gui);
 
 guidata(useSource,gui);
 dummy.Source.Tag = 'slider';
+gui.ctrl.slider.updateSliderAnnot(gui);
+
 updatePlot(gui.h0,dummy);
