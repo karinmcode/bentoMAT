@@ -20,8 +20,10 @@ end
 p       = get(0,'PointerLocation');         %click location
 marker  = getpixelposition(h.Marker,true);
 marker  = gui.h0.Position(1) + marker(1) + marker(3)/2; %marker coordinates
+try
 if(gui.Action(2) & (gui.h0==gcf) && (sign(p(1) - marker) ~= sign(gui.Action(1))))
     return;
+end
 end
 
 h.Value = h.Value + gui.Action(1);
