@@ -1,7 +1,7 @@
 function gui = transferAnnot(gui,data)
 % copies information regarding the current set of annotations into a format
 % the gui understands.
-%
+% also, creates annot.bhv from data.annot.(activeCh) time bouts
 % (C) Ann Kennedy, 2019
 % California Institute of Technology
 % Licensing: https://github.com/annkennedy/bento/blob/master/LICENSE.txt
