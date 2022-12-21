@@ -1,5 +1,6 @@
 function patchify(annot,yran,dt,cmap)
-%
+%  patchify(annot,yran,dt,cmap)
+% takes annot and draws patches (missing target) used only in make_behavior_raster_summary
 % (C) Ann Kennedy, 2019
 % California Institute of Technology
 % Licensing: https://github.com/annkennedy/bento/blob/master/LICENSE.txt
