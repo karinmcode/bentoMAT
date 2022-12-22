@@ -20,3 +20,11 @@ updateLegend(gui,1);
 guidata(source,gui);
 updatePlot(gui.h0,[]);
 myUnfoldAnnotStruct(gui);
+
+% if Annotation Manager is open, relauch it
+hManager = findobj('tag','Annotation manager','type','figure');
+
+if ~isempty(hManager)
+    launchAnnotEditor(gui.h0);
+end
+

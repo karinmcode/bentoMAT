@@ -52,6 +52,9 @@ end
 listOptions = {[ pChannels{1} ' OR ' pChannels{2}]; [pChannels{1} ' OVERWRITES ' pChannels{2}] ; [pChannels{2} ' OVERWRITES ' pChannels{1} ]; ...
     ['ADD ' pChannels{2} ' TO ' pChannels{1} ];['ADD ' pChannels{1} ' TO ' pChannels{2} ]};
 CHOICE_INDEX = listdlg("SelectionMode","single",'ListString',listOptions,'PromptString','How should we merge the annotations?','ListSize',[500 200]);
+if isempty(CHOICE_INDEX)
+    return
+end
 disp(listOptions{CHOICE_INDEX});
 %% make logical data nrows = label iterations (nchannels), ncol= nframes
 nfr = numel(data.annoTime);

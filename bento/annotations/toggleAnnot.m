@@ -126,7 +126,7 @@ end
 
 function inds = getAnnotInds(gui)
     p1 = gui.annot.highlightStart;
-    p2 = ceil((gui.ctrl.slider.Value - gui.ctrl.slider.Min)*gui.data.annoFR);% KM ceil?
+    p2 = floor((gui.ctrl.slider.Value - gui.ctrl.slider.Min)*gui.data.annoFR);% KM floor?
     if(p1<p2)
         inds = p1:p2;
     else

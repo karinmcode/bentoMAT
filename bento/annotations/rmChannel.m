@@ -9,6 +9,9 @@ function gui = rmChannel(gui,toDelete)
 if(isempty(toDelete))
     return;
 end
+if ischar(toDelete)
+    toDelete = {toDelete};
+end
 
 newChannels              = setdiff(gui.annot.channels,toDelete);
 if(isempty(newChannels))
@@ -18,8 +21,9 @@ gui.annot.channels       = newChannels;
 gui.ctrl.annot.ch.String = newChannels;
 
 % remove channel from active annotations
-for ch = toDelete'
-    gui.data.annot      = rmfield(gui.data.annot,ch{:});
+for ich = 1:numel(toDelete)
+    ch = toDelete{ich};
+    gui.data.annot      = rmfield(gui.data.annot,ch);
 end
 
 % update the drop-down menu

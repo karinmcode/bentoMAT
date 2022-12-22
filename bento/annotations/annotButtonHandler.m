@@ -36,6 +36,12 @@ function annotButtonHandler(source,~)
                 newStr = addNewFieldPopup(['New name for ' toCopy{i} ':'],{[toCopy{i} '_2']});
                 gui     = copyChannel(gui,toCopy{i},newStr);
             end
+        case 'rename channel'
+              listChan = gui.annot.channels;
+             CHOICE = listdlg('liststring',listChan,'PromptString','select channel','SelectionMode','single');
+             sourceStr = listChan{CHOICE};
+             newStr = inputdlg('input new name','new name',1,{'beh'});
+             gui = renameChannel(gui, sourceStr, newStr{1});
             
     end
 
