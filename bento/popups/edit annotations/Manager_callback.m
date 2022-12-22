@@ -108,6 +108,11 @@ switch action
             gui.ctrl.annot.ch.Value = find(strcmp(gui.ctrl.annot.ch.String,currChannel));
             setChannel(gui.ctrl.annot.ch);
         end
+
+        guidata(gui.h0,gui);
+        return
+
+        
     case 'split'
         [gui,h] = mySplitLabel(gui,h);
         h.bhv.Value     = [];
@@ -167,7 +172,10 @@ switch action
         gui.annot.activeCh = currChannel;
         gui.ctrl.annot.ch.Value = find(strcmp(gui.ctrl.annot.ch.String,currChannel));
         setChannel(gui.ctrl.annot.ch);
+    case 'summary'
 
+        myUnfoldAnnotStruct(gui);
+        return;
 end
 
 h.bhv.Value     = [];

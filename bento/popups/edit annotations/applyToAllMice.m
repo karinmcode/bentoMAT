@@ -37,7 +37,9 @@ for i = 1:size(inds,1)
                 
             case 'delete'
                 for b = 1:length(killStr)
+                    if isfield(anno.(channels{ch}),killStr{b})
                     anno.(channels{ch}) = rmfield(anno.(channels{ch}),killStr{b});
+                    end
                 end
                 
             case 'merge'

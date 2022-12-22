@@ -80,6 +80,13 @@ hbut=uicontrol('Style','pushbutton','String','Add new',...
     'fontsize',11,'callback',{@Manager_callback,'add'});
 myaddeditfilemenu(hbut,'Manager_callback');
 
+%% Annotation summary
+y = y-vOff;
+hbut=uicontrol('Style','pushbutton','String','Display summary',...
+    'Units','normalized','Position',[.6 y .3 ButHeight],...
+    'fontsize',11,'callback',{@Manager_callback,'summary'});
+myaddeditfilemenu(hbut,'Manager_callback');
+
 %% Save changes
 y = y-vOff*2;
 hbut=uicontrol('Style','pushbutton','String','Save changes',...
