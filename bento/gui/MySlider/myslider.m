@@ -402,20 +402,22 @@ classdef myslider<handle
 
         %%  playSelectBhv(s,src,evt,gui)
         function playSelectBhv(s,gui,varargin)
+
             if isempty(varargin)
                 selectBhv=  {gui.annot.activeBeh};
             else
                 selectBhv = varargin{1};
             end
-            fprintf('\nSelected behaviors : %s' ,strjoin(selectBhv,', '))
-          
 
+            fprintf('\nSelected behaviors : %s    \n' ,strjoin(selectBhv,', '))
+                ns = numel(selectBhv);
+                currentChannel = gui.annot.activeCh;
+           
             annoTime = gui.data.annoTime;
-            if numel(selectBhv)==1
+            if ns==1
                 selectBhv = selectBhv{1};
                 BehTimes = annoTime(gui.annot.bhv.(selectBhv));
             else
-                ns = numel(selectBhv);
                 rast = zeros(size(annoTime));
                 for i = 1:ns
                     rast = rast | gui.annot.bhv.(selectBhv{i});
