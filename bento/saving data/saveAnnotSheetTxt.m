@@ -35,6 +35,9 @@ if DO_CREATE_FILE %need to create a new file
     end
     if ~promptOverride
         [fname,pth] = uiputfile(suggestedName);
+        if fname==0
+            return
+        end
     else
         [pth,fname,ext] = fileparts(suggestedName);
     end
