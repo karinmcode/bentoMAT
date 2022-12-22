@@ -1,10 +1,15 @@
 function myUnfoldAnnotStruct(gui)
+%% myUnfoldAnnotStruct(gui)
+% display all annotation data across channels
 if ~isfield(gui,'data')
     gui = guidata(gui.h0);
 end
 gui.annot.activeCh;
 pch = gui.annot.channels;
 nch = numel(pch);
+fprintf('\n\n\n\n === %g CHANNELS: ===\n\n',nch)
+
+
 for ich = 1:nch
     thisch = pch{ich};
     fprintf('\n-----------')
@@ -29,4 +34,8 @@ for ich = 1:nch
         fprintf('     >CHANNEL %s  IS NOT FIELD',thisch);
     end
 end
+
+
+fprintf('\n\n\n\n')
+
 end

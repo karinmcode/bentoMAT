@@ -19,3 +19,4 @@ updateSliderAnnot(gui);
 updateLegend(gui,1);
 guidata(source,gui);
 updatePlot(gui.h0,[]);
+myUnfoldAnnotStruct(gui);

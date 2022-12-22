@@ -16,15 +16,20 @@ for ich =1:nch
     % check out data to see if channel contains annotation of label to merge
     ch = pChannels{ich};
     chdata = data.annot.(ch);
-    cond1 = isfield(chdata,labelToMerge);
-    if cond1
-        cond2 = ~isempty(chdata.(labelToMerge));
+    ISFIELD = isfield(chdata,labelToMerge);
+    if ISFIELD
+        NOLABELS(ich) = isempty(chdata.(labelToMerge));
     else
-        cond2 = false;
+        NOLABELS(ich) = true;
     end
-    isRelevant(ich) = cond1&cond2;
+    isRelevant(ich) = ISFIELD;
 
 end
+if all(NOLABELS)
+    disp('Nothing to merge.')
+    return;
+end
+
 nRelevant = sum(isRelevant);
 if nRelevant==1
     disp('Nothing to merge.')
@@ -33,20 +38,24 @@ end
 
 pChannels =  pChannels(isRelevant);
 nch = numel(pChannels);
-
+myUnfoldAnnotStruct(gui);
 if nRelevant>2
-    disp('no coded yet')
-    keyboard
+    CHOICE_CHANNELS = listdlg("SelectionMode","multiple",'ListString',pChannels,'PromptString','Merging across channels not coded for more than 2 channels at the time. Choose 2 channels and repeat merging across channels');
+    pChannels = pChannels(CHOICE_CHANNELS);
+    nch = numel(pChannels);
 end
-
+if nch>2 || nch==1
+    fprintf('\nYou chose %g instead of 2 channels to merge. Merging across channels not coded for more than 2 channels at the time.',nch);
+    return;
+end
 %% ask how we should merge
 listOptions = {[ pChannels{1} ' OR ' pChannels{2}]; [pChannels{1} ' OVERWRITES ' pChannels{2}] ; [pChannels{2} ' OVERWRITES ' pChannels{1} ]; ...
     ['ADD ' pChannels{2} ' TO ' pChannels{1} ];['ADD ' pChannels{1} ' TO ' pChannels{2} ]};
-CHOICE_INDEX = listdlg("SelectionMode","single",'ListString',listOptions,'PromptString','How should we merge the annotations?');
-
+CHOICE_INDEX = listdlg("SelectionMode","single",'ListString',listOptions,'PromptString','How should we merge the annotations?','ListSize',[500 200]);
+disp(listOptions{CHOICE_INDEX});
 %% make logical data nrows = label iterations (nchannels), ncol= nframes
 nfr = numel(data.annoTime);
-HITS = ones(length(pChannels),nfr);
+HITS = ones(2,nfr);
 annot = data.annot;
 for ich = 1:length(pChannels)
     ch_annot = annot.(pChannels{ich});
@@ -56,6 +65,9 @@ for ich = 1:length(pChannels)
     elseif(~isempty(ch_annot.(labelToMerge)))
         idx_startend = ch_annot.(labelToMerge);
         hits  = convertToRast(idx_startend,nfr);
+    else
+        hits = false(1,nfr);
+        
     end
     HITS(ich,:)   = hits;
 end
@@ -156,4 +168,5 @@ gui.ctrl.annot.ch.Value = find(strcmp(gui.ctrl.annot.ch.String,currChannel));
 setChannel(gui.ctrl.annot.ch);
 
 
+myUnfoldAnnotStruct(gui);
 
