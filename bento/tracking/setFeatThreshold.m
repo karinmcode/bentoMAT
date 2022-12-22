@@ -45,19 +45,23 @@ updateThresholdBoxes(gui,featInd);% blue ones
 if(strcmpi(gui.annot.activeCh,'thresholded_features'))
     
     mask = getThresholdedFeatureMask(gui);
+    % display how many bouts have been detected%sum(mask)
 
     %% Check if conditional statement exists
-    [mask,gui] = myAddCondStatementForFeature(gui,thisFeat,mask,source);
-    % display how many bouts have been detected
+    [mask,gui] = myAddCondStatementForFeature(gui,thisFeat,mask,source);%thisFeat.condStat.UserData
+    gui.annot.bhv.unsaved_feature = mask;
+    % display how many bouts have been detected%sum(mask)
     fprintf('\n_______')
     fprintf('\n%g bouts detected',sum(diff(mask)==1))
     fprintf('\n_______')
 
+    guidata(gui.h0,gui);
+
     % and display them
-    gui.annot.bhv.unsaved_feature = mask;
-    guidata(gui.h0,gui);
+
+    % update GUI
     updateSliderAnnot(gui);
-    guidata(gui.h0,gui);
+    %gui=guidata(gui.h0);
     updatePlot(gui.h0,[]);
 end
 
