@@ -1,4 +1,4 @@
-function launchAnnotEditor(source,~)
+function h=launchAnnotEditor(source,~)
 %
 % (C) Ann Kennedy, 2019
 % California Institute of Technology
@@ -16,7 +16,8 @@ h.fig = figure('dockcontrols','off','menubar','none',...
     'Tag','Annotation manager','name','Annotation Manager','NumberTitle','off');
 gui.browser = h.fig;
 p = get(h.fig,'Position');
-set(h.fig,'Position',[p(1:2) 500 350]);
+pGUI = gui.h0.Position;
+set(h.fig,'Position',[pGUI(1) pGUI(2)-330  500 300]);
 myaddeditfilemenu(h.fig,'launchAnnotEditor');%KM
 h.bhvMasterList = getAllBehaviors(gui);
 gui = synchronizeMice(gui,h.bhvMasterList);   % get everyone to the same starting point
@@ -31,41 +32,58 @@ h.bhv = uicontrol('Style','listbox',...
     'fontsize',11);
 h.gui = gui;
 guidata(h.fig,h);
-ButHeight = 0.100;
+
+% button positioning variables
+ButHeight = 0.08;
+vOff = 0.1;%vertical offset
+y = 0.95;
 
 %% Play
+y = y-vOff;
 hbut=uicontrol('Style','pushbutton','String','Play selected',...
-    'Units','normalized','Position',[.6 .9 .3 ButHeight],...
+    'Units','normalized','Position',[.6 y .3 ButHeight],...
     'fontsize',11,'callback',{@Manager_callback,'play'});
 myaddeditfilemenu(hbut,'Manager_callback');
 
 %% Merge 
+y = y-vOff;
 hbut=uicontrol('Style','pushbutton','String','Merge selected',...
-    'Units','normalized','Position',[.6 .75 .3 ButHeight],...
+    'Units','normalized','Position',[.6 y .3 ButHeight],...
     'fontsize',11,'callback',{@Manager_callback,'merge'},'Tooltip','Merges within channel if two labels are selected. Merges across channels if one label selected.');
 myaddeditfilemenu(hbut,'Manager_callback');
 
+%% Split selected 
+y = y-vOff;
+hbut=uicontrol('Style','pushbutton','String','Split selected',...
+    'Units','normalized','Position',[.6 y .3 ButHeight],...
+    'fontsize',11,'callback',{@Manager_callback,'split'},'Tooltip','Splits labels in 6 sublabel based on frame similarity.');
+myaddeditfilemenu(hbut,'Manager_callback');
+
 %% Rename
+y = y-vOff;
 hbut=uicontrol('Style','pushbutton','String','Rename',...
-    'Units','normalized','Position',[.6 .6 .3 ButHeight],...
+    'Units','normalized','Position',[.6 y .3 ButHeight],...
     'fontsize',11,'callback',{@Manager_callback,'rename'});
 myaddeditfilemenu(hbut,'Manager_callback');
 
 %% Delete
+y = y-vOff;
 hbut=uicontrol('Style','pushbutton','String','Delete',...
-    'Units','normalized','Position',[.6 .45 .3 ButHeight],...
+    'Units','normalized','Position',[.6 y .3 ButHeight],...
     'fontsize',11,'callback',{@Manager_callback,'delete'});
 myaddeditfilemenu(hbut,'Manager_callback');
 
 %% 'Add new'
+y = y-vOff;
 hbut=uicontrol('Style','pushbutton','String','Add new',...
-    'Units','normalized','Position',[.6 .3 .3 ButHeight],...
+    'Units','normalized','Position',[.6 y .3 ButHeight],...
     'fontsize',11,'callback',{@Manager_callback,'add'});
 myaddeditfilemenu(hbut,'Manager_callback');
 
 %% Save changes
+y = y-vOff*2;
 hbut=uicontrol('Style','pushbutton','String','Save changes',...
-    'Units','normalized','Position',[.6 .075 .3 .15],...
+    'Units','normalized','Position',[.6 y .3 .15],...
     'fontsize',11,'backgroundcolor',[.65 1 .65],...
     'callback',@Manager_applyLabelChanges);
 myaddeditfilemenu(hbut,'Manager_applyLabelChanges');

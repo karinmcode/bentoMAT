@@ -60,12 +60,15 @@ switch action
 
     case 'merge'
         if MergeXchannels
-            mymergelabelsXchannels(gui,h)
+            gui=mymergelabelsXchannels(gui,h);
         else
             currChannel = gui.annot.activeCh;
             inds    = h.bhv.Value;
             toMerge = h.bhv.String(inds);
             potentialNewName = toMerge(~contains(toMerge,'prelabel'));
+            if isempty(potentialNewName)
+                potentialNewName = {''};
+            end
             answer  = inputdlg({'Enter name of new (merged) annotation','Keep old annotations? (y/n)'},...
                 ['Merging behaviors ' strjoin(toMerge,' ')],1,{potentialNewName{1},'no'});
             if(isempty(answer)) return; end
@@ -105,7 +108,15 @@ switch action
             gui.ctrl.annot.ch.Value = find(strcmp(gui.ctrl.annot.ch.String,currChannel));
             setChannel(gui.ctrl.annot.ch);
         end
+    case 'split'
+        [gui,h] = mySplitLabel(gui,h);
+        h.bhv.Value     = [];
+        h.bhv.String    = h.bhvMasterList;
+        h.gui           = gui;
 
+        guidata(h.fig,h);
+        guidata(gui.h0,gui);
+        return
     case 'rename'
         currChannel = gui.annot.activeCh;
         ind             = h.bhv.Value;
