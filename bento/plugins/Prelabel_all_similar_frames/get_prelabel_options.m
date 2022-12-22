@@ -1,4 +1,4 @@
-function [opt,isloading_necessary,urlstep] = get_prelabel_options(gui)
+function [opt,isloading_necessary,urlstep] = get_prelabel_options(gui,varargin)
 %% Define steps
 
 %% 1) Image processing steps
@@ -18,8 +18,11 @@ function [opt,isloading_necessary,urlstep] = get_prelabel_options(gui)
 % - fcm
 % - gaussmix :gaussian mixture model clustering
 
-
-opt.steps = {'vidmotion' 'HOG','PCA','uMAP','fcm'};%'ROI','HOG','wavelet','PCA','tSNE','kmeans',dbscan,watershed,fcm
+if ~isempty(varargin)
+    opt =  varargin{1};
+else
+    opt.steps = {'vidmotion' 'HOG','PCA','uMAP','fcm'};%'ROI','HOG','wavelet','PCA','tSNE','kmeans',dbscan,watershed,fcm
+end
 
 fprintf('\n\n   %s',get_params_string(opt));
 nsteps = numel(opt.steps);

@@ -1,7 +1,7 @@
 %% Prelabel_and_Cluster_Similar_Frames
 % Karin Morandell 2022 11 24
 % src: edit G:\My Drive\Projects\20190620 Isometric force task\GUIs\GUI_AnalysisBehPhys_211122\code\KM video functions\get_beh_states_220608.m
-function Prelabel_and_Cluster_Similar_Frames(source)
+function Prelabel_and_Cluster_Similar_Frames(source,varargin)
 
 try
     gui = guidata(source);

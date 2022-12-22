@@ -183,12 +183,17 @@ else% upload all frames
     obs = all_frames;
 end
 
+if isfield(opt,'SelectedFrames')
+obs = obs(opt.SelectedFrames,:);
+
+end
+
 %% STEP: PCA
 if contains('PCA',opt.steps)
     fprintf('\n==== PCA ====');
     if isloading_necessary.PCA
         tic
-        if exist(urlstep.PCA,'file')==0
+        if exist(urlstep.PCA,'file')==0 || isfield(opt,'SelectedFrames')
             sz=fprintf(' >> doing PCA ...') ;
             tic
             [coeff,score,latent,tsquared,explained,mu] = pca(obs,'NumComponents',opt.PCA.nPCs);
@@ -200,7 +205,9 @@ if contains('PCA',opt.steps)
 
             fprintf(' >> did PCA in %.0f sec',toc) ;
             nPCs = opt.PCA.nPCs;
-            save(urlstep.PCA,'-v7.3','score','nPCs','explained','coeff','explained','latent')
+            if ~isfield(opt,'SelectedFrames')
+                save(urlstep.PCA,'-v7.3','score','nPCs','explained','coeff','explained','latent')
+            end
         else
             sz=fprintf('\nLoading PCA   ... %s',getfilesize(urlstep.PCA));
             load(urlstep.PCA,'score','nPCs','explained','coeff','explained','latent')
@@ -337,7 +344,7 @@ if contains('uMAP',opt.steps)
             fig_test_uMAP=test_uMAP(obs);
         end
 
-        if isfile(urlstep.uMAP)==0
+        if isfile(urlstep.uMAP)==0  || isfield(opt,'SelectedFrames')
             nvar = size(obs,2);
             uMAP_var = mynum2str(1:nvar,'v%g','cellstr');
 
@@ -354,7 +361,9 @@ if contains('uMAP',opt.steps)
                 close(extras.fig);
             end
             try
+                if ~isfield(opt,'SelectedFrames')
                 save(urlstep.uMAP,'-v7.3','XYclusters','umap','clusterIdentifiers');
+                end
             catch err
                 warning('did not save');
                 warning(err.message);
@@ -484,7 +493,7 @@ if contains('watershed',opt.steps)
     fwat=makegoodfig('watershed','slide');
     add_analysis_params(gcf,opt);
     ncol = 3;
-    ax=subplot(1,ncol,1,'replace')
+    ax=subplot(1,ncol,1,'replace');
     imagesc(centers{:}, XYdensity.')
     if contains(opt.steps,'uMAP')
         pclu = unique(clusterIdentifiers);
