@@ -153,6 +153,7 @@ if(all(gui.enabled.features) && isfield(gui.features,'feat'))
         %             B = B/max(B(:));
         %             ydata = B+M;
         %%             - set ydata and xdata for features
+        try
         set(gui.features.feat(ich).trace,'xdata',xdata,...
             'ydata',ydata);
         ax = gui.features.feat(ich).axes;
@@ -162,7 +163,9 @@ if(all(gui.enabled.features) && isfield(gui.features,'feat'))
         ylim(ax,3*[-1 1]*STD+ME)
         uistack(gui.features.feat(ich).zeroLine,'top');
         gui.features.feat(ich).zeroLine.YData = ylim(ax);
-
+        catch
+            disp('KM fix:failed updating plot')
+        end
     end
 end
 
