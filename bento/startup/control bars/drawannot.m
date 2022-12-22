@@ -9,74 +9,88 @@ function annot = drawannot(gui,row,scale,nRows)
 annot.panel = uipanel('parent',gui.ctrl.panel,...
         'position',[0.01 (row-.5)/(nRows+1) 0.98 scale/(nRows+1)],'bordertype','none');
 
+%% x locations of GUI elements
+x= .005;
+xstep =0.002;
+
 %% Channel text
-uicontrol('parent',annot.panel,'Style','text',...
-            'String','Channel','units','normalized','Position', [.025 0 .075 .7]);
+h=uicontrol('parent',annot.panel,'Style','text',...
+            'String','Channel','units','normalized','Position', [x 0 .065 .7]);
 
 %% Channel popupmenu
+x = x+h.Position(3)+xstep;
 annot.ch = uicontrol('parent',annot.panel,'Style','popupmenu',...
-            'String',{''},'units','normalized','Position', [.1 0 .15 .8],...
+            'String',{''},'units','normalized','Position', [x 0 .15 .8],...
             'Callback',@setChannel);
-myaddeditfilemenu(annot.ch,'drawannot');
-myaddeditfilemenu(annot.ch,'setChannel');
-
+myaddeditfilemenu(annot.ch,{'drawannot' 'setChannel' }  );
+h = annot.ch;
 %% 
+x = x+h.Position(3)+xstep;
 h=uicontrol('parent',annot.panel,'Style','pushbutton',...
-            'String','Add','units','normalized','Position', [.255 0 .065 .8],...
+            'String','Add','units','normalized','Position', [x 0 .065 .8],...
             'Tag','add channel','Callback',@annotButtonHandler);
-myaddeditfilemenu(h,'drawannot');
-myaddeditfilemenu(h,'annotButtonHandler');
+myaddeditfilemenu(h,{'drawannot' 'annotButtonHandler' });
 
 %% 
+x = x+h.Position(3)+xstep;
 h=uicontrol('parent',annot.panel,'Style','pushbutton',...
-            'String','Delete','units','normalized','Position', [.32 0 .065 .8],...
+            'String','Delete','units','normalized','Position', [x 0 .065 .8],...
             'Tag','remove channel','Callback',@annotButtonHandler);
-myaddeditfilemenu(h,'drawannot');
-myaddeditfilemenu(h,'annotButtonHandler');
+myaddeditfilemenu(h,{'drawannot' 'annotButtonHandler' });
 
-%%
+%% Duplicate
+x = x+h.Position(3)+xstep;
 h=uicontrol('parent',annot.panel,'Style','pushbutton',...
-            'String','Duplicate','units','normalized','Position', [.385 0 .065 .8],...
+            'String','Duplicate','units','normalized','Position', [x 0 .065 .8],...
             'Tag','copy channel','Callback',@annotButtonHandler);
 myaddeditfilemenu(h,'drawannot');
 myaddeditfilemenu(h,'annotButtonHandler');
 myaddeditfilemenu(h,'copyChannel');
 
-  %%      
+%% Rename
+x = x+h.Position(3)+xstep;
+h=uicontrol('parent',annot.panel,'Style','pushbutton',...
+            'String','Rename','units','normalized','Position', [x 0 .065 .8],...
+            'Tag','rename channel','Callback',@annotButtonHandler);
+myaddeditfilemenu(h,{'drawannot' 'annotButtonHandler' 'renameChannel'});
+
+
+%%  Labels 
+x = x+h.Position(3)+xstep;
 h=uicontrol('parent',annot.panel,'Style','text',...
-            'String','Behaviors','units','normalized','Position', [.465 0 .1 .7]);
+            'String','Labels','units','normalized','Position', [x 0 .08 .7]);
 myaddeditfilemenu(h,'drawannot');
 
-%%
+%% Add
+x = x+h.Position(3)+xstep;
 h=uicontrol('parent',annot.panel,'Style','pushbutton',...
-            'String','Add','units','normalized','Position', [.55 0 .065 .8],...
+            'String','Add','units','normalized','Position', [x 0 .065 .8],...
             'Tag','add behavior','Callback',@annotButtonHandler);
-myaddeditfilemenu(h,'drawannot');
-myaddeditfilemenu(h,'annotButtonHandler');
+myaddeditfilemenu(h,{'drawannot' 'annotButtonHandler' });
 
 %% Delete behavior button
+x = x+h.Position(3)+xstep;
 h=uicontrol('parent',annot.panel,'Style','pushbutton',...
-            'String','Delete','units','normalized','Position', [.615 0 .065 .8],...
+            'String','Delete','units','normalized','Position', [x 0 .065 .8],...
             'Tag','remove behavior','Callback',@annotButtonHandler);
-myaddeditfilemenu(h,'drawannot');
-myaddeditfilemenu(h,'annotButtonHandler');
+myaddeditfilemenu(h,{'drawannot' 'annotButtonHandler' });
 
 %% Fast Edit button
+x = x+h.Position(3)+xstep;
 annot.fastEdit = uicontrol('parent',annot.panel,'Style','togglebutton',...
-            'String','Fast Edit','units','normalized','Position', [.68 0 .065 .8],...
+            'String','Fast Edit','units','normalized','Position', [x 0 .065 .8],...
             'Tag','edit');
-myaddeditfilemenu(annot.fastEdit,'drawannot');
-myaddeditfilemenu(annot.fastEdit,'annotButtonHandler');
+h = annot.fastEdit;
+myaddeditfilemenu(h,{'drawannot' 'annotButtonHandler' });
 
 %% Save button
+x = x+h.Position(3)+xstep*2;
 load('icons.mat');%#ok
 annot.save        = uicontrol(annot.panel,'Style','pushbutton','CData',imgs.f3,'units','normalized',...
-               'position',[.79 .05 .05 .8],'tooltip','Save annotations','callback',@quickSave);
-myaddeditfilemenu(annot.save,'drawannot');
-myaddeditfilemenu(annot.save,'quickSave');
+               'position',[x .05 .05 .8],'tooltip','Save annotations','callback',@quickSave);
+myaddeditfilemenu(annot.save,{'drawannot' 'quickSave'} );
 
 %% MARS button
 annot.MARS        = uicontrol(annot.panel,'Style','pushbutton','string','MARS','units','normalized',...
-               'position',[.85 0 .15 1],'backgroundcolor',[1 .75 .85],'callback',@MARSoptions);
-myaddeditfilemenu(annot.MARS,'drawannot');
-myaddeditfilemenu(annot.MARS,'MARSoptions');
+               'position',[.85 0 .1 1],'backgroundcolor',[1 .75 .85],'callback',@MARSoptions);
+myaddeditfilemenu(annot.MARS,{'drawannot' 'MARSoptions'});
