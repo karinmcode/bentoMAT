@@ -117,8 +117,11 @@ end
 if(all(gui.enabled.features) && isfield(gui.features,'feat'))
 
     Window = str2double(gui.ctrl.track.win.String);
-    vec  = (gui.data.trackTime >= (time-Window)) & (gui.data.trackTime <= (time+Window));
-    vec  = vec | [false vec(1:end-1)] | [vec(2:end) false];
+    annoTime = gui.data.annoTime;
+    t1 = max([time-Window annoTime(1)]);
+    t2 = min([time+Window annoTime(end)]);
+    vec  = (gui.data.trackTime >= t1) & (gui.data.trackTime <= t2);
+    %vec  = vec | [false vec(1:end-1)] | [vec(2:end) false];% why?
     if isempty(gui.data.trackTime)
         gui.data.trackTime = gui.data.annoTime;
         keyboard
@@ -144,6 +147,7 @@ if(all(gui.enabled.features) && isfield(gui.features,'feat'))
         else
              features_ch = features;
              all_t_ydata = features_ch{gui.features.feat(ich).featNum};
+             vec = vec(1:numel(all_t_ydata));
             ydata = all_t_ydata(vec);
             xdata = gui.data.trackTime(vec) - time;
         end
@@ -154,15 +158,15 @@ if(all(gui.enabled.features) && isfield(gui.features,'feat'))
         %             ydata = B+M;
         %%             - set ydata and xdata for features
         try
-        set(gui.features.feat(ich).trace,'xdata',xdata,...
-            'ydata',ydata);
-        ax = gui.features.feat(ich).axes;
-        STD = mystd(all_t_ydata(:));
-        ME = mymean(all_t_ydata(:));
-        %ylim(ax,[0.8 1.2].*[mymin(all_t_ydata(:)) mymax(all_t_ydata(:))])
-        ylim(ax,3*[-1 1]*STD+ME)
-        uistack(gui.features.feat(ich).zeroLine,'top');
-        gui.features.feat(ich).zeroLine.YData = ylim(ax);
+            set(gui.features.feat(ich).trace,'xdata',xdata,...
+                'ydata',ydata);
+            ax = gui.features.feat(ich).axes;
+            STD = mystd(all_t_ydata(:));
+            ME = mymean(all_t_ydata(:));
+            %ylim(ax,[0.8 1.2].*[mymin(all_t_ydata(:)) mymax(all_t_ydata(:))])
+            ylim(ax,3*[-1 1]*STD+ME)
+            uistack(gui.features.feat(ich).zeroLine,'top');
+            gui.features.feat(ich).zeroLine.YData = ylim(ax);
         catch
             disp('KM fix:failed updating plot')
         end
