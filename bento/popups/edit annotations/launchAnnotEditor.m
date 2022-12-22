@@ -15,7 +15,7 @@ end
 h.fig = figure('dockcontrols','off','menubar','none',...
     'Tag','Annotation manager','name','Annotation Manager','NumberTitle','off');
 gui.browser = h.fig;
-p = get(h.fig,'Position');
+
 pGUI = gui.h0.Position;
 set(h.fig,'Position',[pGUI(1) pGUI(2)-330  500 300]);
 myaddeditfilemenu(h.fig,'launchAnnotEditor');%KM

@@ -145,6 +145,6 @@ updateSliderAnnot(gui);
 
 guidata(gui.h0,gui);
 
-launchAnnotEditor(gui.h0)
+launchAnnotEditor(gui.h0);
 
 disp done

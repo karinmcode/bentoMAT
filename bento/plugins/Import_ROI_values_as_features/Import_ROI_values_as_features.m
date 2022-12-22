@@ -84,7 +84,7 @@ end
 
 ROI_values = nan(1,VidReader.NumFrames);
 VidReader.CurrentTime = 0;
-computationOpt = {'abs(red - green)+abs(green - red)' 'sum all pixels across channels' 'sum red channel' 'sum green channel' 'sum red and green channel' 'min value across ROI pixels' 'max value across ROI pixels' 'sum white pixels'  'other'};
+computationOpt = {'abs(red - green)' 'sum all pixels across channels' 'sum red channel' 'sum green channel' 'sum red and green channel' 'min value across ROI pixels' 'max value across ROI pixels' 'sum white pixels'  'other'};
 choiceIdx = listdlg('ListString',computationOpt,'SelectionMode','single');
 Choice = computationOpt{choiceIdx};
 %% GO ACROSS FRAMES
@@ -110,7 +110,7 @@ for ifr = 1:VidReader.NumFrames
                 I = imcrop(frame(:,:,1),ROI_dim)+I;
                 ROI_values(ifr) =sum(I(:)); 
 
-            case 'abs(red - green)+abs(green - red)'
+            case 'abs(red - green)'
                 I = imcrop(frame,ROI_dim);
                 I = abs(diff(I(:,:,1:2),1,3));
                 ROI_values(ifr) =mean(I(:));
@@ -154,7 +154,7 @@ end
 %% update data and gui menu
 newFeatures.(varname.ROI_values)=ROI_values;
 
-myImportNewFeatures(gui,newFeatures)
+myImportNewFeatures(gui,newFeatures);
 
 % end
 
