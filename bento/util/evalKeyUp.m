@@ -77,7 +77,7 @@ switch eventdata.Key
         if(gui.enabled.annot(2) && ~isempty(gui.annot.activeCh))
             str     = gui.annot.activeBeh
             if isempty(str)
-                disp isempty active Beh
+                disp 'isempty active Beh'
                 return
             end
             start   = floor((gui.ctrl.slider.Value - gui.ctrl.slider.Min + 1/gui.data.annoFR)*gui.data.annoFR)+1;
